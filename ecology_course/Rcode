@@ -1,0 +1,113 @@
+rm(list=ls())
+
+#import tools
+library(ggplot2)
+library(ggtree)
+library(ape)
+library(plyr)
+library(phytools)
+library(phangorn)
+library(ggnewscale)
+library(phylobase)
+library(stringr)
+library(tidyr)
+library(ggpubr)
+library(grid)
+library(gridExtra)
+library(forcats)
+
+#set wd
+homewd= '/Users/mfv2446/Desktop/Developer/turner_lab/ecology/'
+setwd(paste0(homewd))
+
+#load the tree
+bird_tree <- read.tree(file = paste0(homewd, "T3.raxml.supportFBP"))
+
+rooted.bird.tree <- midpoint.root(bird_tree)
+
+#visualize tree
+final.tree <- ggtree(rooted.bird.tree) + 
+  geom_nodelab(aes(label=label), size=1, nudge_x=-0.01, nudge_y=0.25) +
+  geom_tiplab(align= F, linetype="dotted", linesize = 0.1, size = 2.5) + 
+  geom_point(colour='black')
+
+final.tree
+  
+
+#re-label nodes
+rooted.bird.tree$tip.label <- gsub("DQ434727", "DQ434727 | Common Grackle", 
+                         rooted.bird.tree$tip.label)
+rooted.bird.tree$tip.label <- gsub("DQ434249", "DQ434249 | Red Winged Blackbird", 
+                                   rooted.bird.tree$tip.label)
+rooted.bird.tree$tip.label <- gsub("DQ434506", "DQ434506 | Cardinal", 
+                         rooted.bird.tree$tip.label)
+rooted.bird.tree$tip.label <- gsub("DQ434519", "DQ434519 | House Finch", 
+                         rooted.bird.tree$tip.label)
+rooted.bird.tree$tip.label <- gsub("DQ434515", "DQ434515 | American Goldfinch", 
+                         rooted.bird.tree$tip.label)
+rooted.bird.tree$tip.label <- gsub("DQ434745", "DQ434745 | White-Breasted Nuthatch", 
+                         rooted.bird.tree$tip.label)
+rooted.bird.tree$tip.label <- gsub("DQ434341", "DQ434341 | Tufted Titmouse", 
+                         rooted.bird.tree$tip.label)
+rooted.bird.tree$tip.label <- gsub("DQ434723", "DQ434723 | Black-Capped Chickadee", 
+                         rooted.bird.tree$tip.label)
+rooted.bird.tree$tip.label <- gsub("DQ434772", "DQ434772 | European Starling", 
+                         rooted.bird.tree$tip.label)
+rooted.bird.tree$tip.label <- gsub("DQ434791", "DQ434791 | American Robin", 
+                         rooted.bird.tree$tip.label)
+rooted.bird.tree$tip.label <- gsub("DQ434557", "DQ434557 | Blue Jay", 
+                         rooted.bird.tree$tip.label)
+rooted.bird.tree$tip.label <- gsub("AY666228", "AY666228 | Downy Woodpecker", 
+                         rooted.bird.tree$tip.label)
+rooted.bird.tree$tip.label <- gsub("DQ434713", "DQ434713 | Hairy Woodpecker", 
+                         rooted.bird.tree$tip.label)
+rooted.bird.tree$tip.label <- gsub("DQ434638", "DQ434638 | Red-Bellied Woodpecker", 
+                         rooted.bird.tree$tip.label)
+rooted.bird.tree$tip.label <- gsub("DQ434236", "DQ434236 | Mourning Dove", 
+                         rooted.bird.tree$tip.label)
+
+#visualize tree and link taxa
+final.tree <- ggtree(rooted.bird.tree) + 
+  geom_nodelab(aes(label=label), size=1, nudge_x=-0.01, nudge_y=0.25) +
+  geom_tiplab(align= F, linetype="dotted", linesize = 0.1, size = 2.5) + 
+  geom_point(colour='black') + 
+  #taxalink positive relationships 
+  geom_taxalink(taxa1 = 'DQ434249 | Red Winged Blackbird', taxa2 = 'DQ434772 | European Starling', 
+                colour = 'green', curvature = -1, alpha = 0.5) + 
+  geom_taxalink(taxa1 = 'DQ434249 | Red Winged Blackbird', taxa2 = 'DQ434236 | Mourning Dove', 
+                colour = 'green', curvature = -1, alpha = 0.5) + 
+  #taxalink negative relationships
+  geom_taxalink(taxa1 = 'DQ434249 | Red Winged Blackbird', taxa2 = 'DQ434557 | Blue Jay', 
+                colour = 'red', curvature = -1, alpha = 0.5) + 
+  geom_taxalink(taxa1 = 'DQ434249 | Red Winged Blackbird', taxa2 = 'DQ434341 | Tufted Titmouse', 
+                colour = 'red', curvature = -1, alpha = 0.5) + 
+  ggtitle("CO1 Gene Tree & Niche Use") 
+
+final.tree
+
+
+
+
+#import class aggregate data and arrange
+class_dat <- read.csv("class_data.csv")
+
+class_dat_2 <- class_dat %>%
+  arrange(Visits)
+
+
+#visualize aggregate data 
+
+ggplot(class_dat, aes(Bird, Visits)) + 
+  geom_col() + ylab("Total Visits To Feeders") + xlab("Bird Species") + 
+  ggtitle("Class Aggregate Data") + coord_flip()
+
+final.plot
+
+
+
+
+
+
+
+
+
